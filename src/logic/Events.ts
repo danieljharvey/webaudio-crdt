@@ -80,8 +80,11 @@ export const actions = {
   setOscNodeType
 };
 
-const fold = <A, B>(f: (acc: B, a: A) => B, def: B, map: Map<any, A>): B =>
-  Array.from(map).reduce<B>((as, [_, a]) => f(as, a), def);
+export const fold = <A, B>(
+  f: (acc: B, a: A) => B,
+  def: B,
+  map: Map<any, A>
+): B => Array.from(map).reduce<B>((as, [_, a]) => f(as, a), def);
 
 export const foldEvents = (
   state: DesiredState,
@@ -166,50 +169,46 @@ interface Postable {
   event: EventType;
 }
 
-let outstanding: Postable[] = [];
-
 const postEvents = (postable: Postable[]) =>
   axios
     .post("http://localhost:3006/pushEvents", { items: postable })
     .catch(console.error);
-
-let events: Map<number, EventType> = new Map();
-
-// type Return = [number, EventType][];
 
 const getCurrentTimestamp = () => {
   const date = new Date();
   return date.getTime();
 };
 
-export const dispatchEvent = (setState: (s: DesiredState) => void) => (
-  evt: EventType
-): void => {
-  events.set(getCurrentTimestamp(), evt);
-  const newState = fold(foldEvents, initialDesiredState, events);
-  console.log("state from fetchedEvents", newState);
-  setState(newState);
+export const dispatchEvent = (
+  getEvents: () => Map<number, EventType>,
+  setEvents: (evts: Map<number, EventType>) => void
+) => (evt: EventType): void => {
+  const oldEvents = getEvents();
+  const events = oldEvents.set(getCurrentTimestamp(), evt);
+  console.log("event list", events.size);
+  setEvents(new Map(events));
 };
 
-/*
-export const dispatchEvent = (evt: EventType) =>
-  outstanding.push({ timestamp: getCurrentTimestamp(), event: evt });
+type Return = [number, EventType][];
 
-export const go = (setState: (s: DesiredState) => void) => {
+export const fetchRemoteEvents = (
+  getEvents: () => Map<number, EventType>,
+  setEvents: (evts: Map<number, EventType>) => void
+) => {
+  /*
   setInterval(() => {
-    fetchEvents().then((a: Return) => {
-      const map = new Map(a);
-      events = new Map([...events, ...map]);
-      const newState = fold(foldEvents, initialDesiredState, events);
-      console.log("state from fetchedEvents", newState);
-      setState(newState);
+    fetchEvents().then((newEvents: Return) => {
+      const newEventsMap = new Map(newEvents);
+      const oldEvents = getEvents();
+      const allEvents = new Map([...oldEvents, ...newEventsMap]);
+      console.log("event list", allEvents.size);
+      setEvents(allEvents);
     });
   }, 5000);
+*/
+  /*setInterval(() => {
 
-  setInterval(() => {
     // console.log(`posting ${outstanding.length} events`);
     postEvents(outstanding).then(_ => (outstanding = []));
-  }, 1000);
+  }, 1000);*/
 };
-
-*/
