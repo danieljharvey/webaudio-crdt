@@ -1,13 +1,14 @@
-import {State, WebAudioState, DesiredState} from '../types/State';
-import {Postable, EventType, combineEvents} from '../logic/Events';
+import { State, WebAudioState, DesiredState } from "../types/State";
+import { EventType, combineEvents } from "../logic/Events";
+import { Postable } from "../logic/Api";
 
 interface SaveEvents {
-  type: 'SaveEvents';
-  payload: {events: [number, EventType][]};
+  type: "SaveEvents";
+  payload: { events: [number, EventType][] };
 }
 
 interface AddEvent {
-  type: 'AddEvent';
+  type: "AddEvent";
   payload: {
     timestamp: number;
     evt: EventType;
@@ -15,7 +16,7 @@ interface AddEvent {
 }
 
 interface UpdateAudioTree {
-  type: 'UpdateAudioTree';
+  type: "UpdateAudioTree";
   payload: {
     webAudio: WebAudioState;
     desiredState: DesiredState;
@@ -23,7 +24,7 @@ interface UpdateAudioTree {
 }
 
 interface SetLastPushed {
-  type: 'SetLastPushed';
+  type: "SetLastPushed";
   payload: {
     timestamp: number;
   };
@@ -33,36 +34,36 @@ export type Action = SaveEvents | AddEvent | UpdateAudioTree | SetLastPushed;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'SaveEvents':
+    case "SaveEvents":
       // sdfsdfsdf
       const newEventsMap = new Map(action.payload.events);
       return {
         ...state,
-        events: combineEvents(state.events, newEventsMap),
+        events: combineEvents(state.events, newEventsMap)
       };
 
-    case 'AddEvent':
+    case "AddEvent":
       // sdfsdfsdf
       const events = new Map(state.events).set(
         action.payload.timestamp,
-        action.payload.evt,
+        action.payload.evt
       );
       return {
         ...state,
-        events,
+        events
       };
 
-    case 'UpdateAudioTree':
+    case "UpdateAudioTree":
       return {
         ...state,
         data: action.payload.desiredState,
-        webAudio: action.payload.webAudio,
+        webAudio: action.payload.webAudio
       };
 
-    case 'SetLastPushed':
+    case "SetLastPushed":
       return {
         ...state,
-        lastPushed: action.payload.timestamp,
+        lastPushed: action.payload.timestamp
       };
   }
   return state;
@@ -74,4 +75,4 @@ export const getMaxKey = (state: State): number =>
 export const getOutstanding = (state: State): Postable[] =>
   Array.from(state.events)
     .filter(a => a[0] > (state.lastPushed || 0))
-    .map(a => ({timestamp: a[0], event: a[1]}));
+    .map(a => ({ timestamp: a[0], event: a[1] }));

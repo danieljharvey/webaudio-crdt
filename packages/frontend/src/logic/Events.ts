@@ -2,8 +2,6 @@ import * as Types from "../types/Types";
 import { State, initialDesiredState, DesiredState } from "../types/State";
 import { Action, getOutstanding, getMaxKey } from "../reducer/reducer";
 
-import axios from "axios";
-
 interface EventShape<k, a> {
   kind: k;
   payload: a;
@@ -156,24 +154,6 @@ export const foldEvents = (
   }
   return state;
 };
-
-export const fetchEvents = () =>
-  axios
-    .get("http://localhost:3006/events")
-    .then(a => a.data)
-    .catch(e => {
-      console.error("Could not fetch!");
-    });
-
-export interface Postable {
-  timestamp: number;
-  event: EventType;
-}
-
-export const postEvents = (postable: Postable[]) =>
-  axios
-    .post("http://localhost:3006/pushEvents", { items: postable })
-    .catch(console.error);
 
 export const getCurrentTimestamp = () => {
   const date = new Date();

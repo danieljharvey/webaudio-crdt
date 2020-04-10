@@ -1,19 +1,18 @@
-import React from 'react';
+import React from "react";
 
 import {
   fold,
   foldEvents,
   actions,
   EventType,
-  fetchEvents,
-  getCurrentTimestamp,
-  postEvents,
-} from '../logic/Events';
-import {initialState, initialDesiredState, State} from '../types/State';
-import {diffAllOscs} from '../logic/Diff';
-import {updateAudioTree} from '../logic/AudioTree';
-import {Oscillator} from './Oscillator';
-import {reducer, getOutstanding, getMaxKey} from '../reducer/reducer';
+  getCurrentTimestamp
+} from "../logic/Events";
+import { fetchEvents, postEvents } from "../logic/Api";
+import { initialState, initialDesiredState, State } from "../types/State";
+import { diffAllOscs } from "../logic/Diff";
+import { updateAudioTree } from "../logic/AudioTree";
+import { Oscillator } from "./Oscillator";
+import { reducer, getOutstanding, getMaxKey } from "../reducer/reducer";
 
 function useInterval(callback: any, delay: number) {
   const savedCallback: any = React.useRef();
@@ -44,11 +43,11 @@ export const Synth = () => {
   const dispatchEvt = (evt: EventType) => {
     const timestamp = getCurrentTimestamp();
     dispatch({
-      type: 'AddEvent',
+      type: "AddEvent",
       payload: {
         evt,
-        timestamp,
-      },
+        timestamp
+      }
     });
   };
 
@@ -56,18 +55,18 @@ export const Synth = () => {
     const desiredState = fold(foldEvents, initialDesiredState, state.events);
     const webAudioState = updateAudioTree(
       state.webAudio,
-      diffAllOscs(state.data.oscillators, desiredState.oscillators),
+      diffAllOscs(state.data.oscillators, desiredState.oscillators)
     );
     dispatch({
-      type: 'UpdateAudioTree',
-      payload: {webAudio: webAudioState, desiredState},
+      type: "UpdateAudioTree",
+      payload: { webAudio: webAudioState, desiredState }
     });
   }, [state.events]);
 
   type Return = [number, EventType][];
   useInterval(() => {
     fetchEvents().then((newEvents: Return) =>
-      dispatch({type: 'SaveEvents', payload: {events: newEvents}}),
+      dispatch({ type: "SaveEvents", payload: { events: newEvents } })
     );
   }, 1000);
 
@@ -75,19 +74,21 @@ export const Synth = () => {
     const outstanding = getOutstanding(state);
     const key = getMaxKey(state);
     postEvents(outstanding).then(_ => {
-      dispatch({type: 'SetLastPushed', payload: {timestamp: key}});
+      dispatch({ type: "SetLastPushed", payload: { timestamp: key } });
     });
   }, 1000);
 
   const create = () => {
     // create an osc and then increase number
-    dispatchEvt(actions.createOscillator({id: `osc${num}`, _type: 'OscNode'}));
+    dispatchEvt(
+      actions.createOscillator({ id: `osc${num}`, _type: "OscNode" })
+    );
     setNum(num + 1);
   };
 
   return (
     <div>
-      {' '}
+      {" "}
       <button onClick={create}>Create</button>
       {state.data.oscillators.map((osc, key) => (
         <Oscillator key={key} oscillator={osc} dispatchEvent={dispatchEvt} />
