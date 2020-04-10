@@ -1,8 +1,8 @@
-import * as Types from '../types/Types';
-import {State, initialDesiredState, DesiredState} from '../types/State';
-import {Action, getOutstanding, getMaxKey} from '../reducer/reducer';
+import * as Types from "../types/Types";
+import { State, initialDesiredState, DesiredState } from "../types/State";
+import { Action, getOutstanding, getMaxKey } from "../reducer/reducer";
 
-import axios from 'axios';
+import axios from "axios";
 
 interface EventShape<k, a> {
   kind: k;
@@ -14,10 +14,10 @@ interface CreateOscillator {
 }
 
 const createOscillator = (nodeId: Types.NodeId): EventType => ({
-  kind: 'CreateOscillator',
+  kind: "CreateOscillator",
   payload: {
-    nodeId,
-  },
+    nodeId
+  }
 });
 
 interface SetPlaying {
@@ -27,13 +27,13 @@ interface SetPlaying {
 
 const setPlaying = (
   nodeId: Types.NodeId,
-  playing: Types.Playing,
+  playing: Types.Playing
 ): EventType => ({
-  kind: 'SetPlaying',
+  kind: "SetPlaying",
   payload: {
     nodeId,
-    playing,
-  },
+    playing
+  }
 });
 
 interface SetFrequency {
@@ -43,13 +43,13 @@ interface SetFrequency {
 
 const setFrequency = (
   nodeId: Types.NodeId,
-  frequency: Types.Frequency,
+  frequency: Types.Frequency
 ): EventType => ({
-  kind: 'SetFrequency',
+  kind: "SetFrequency",
   payload: {
     nodeId,
-    frequency,
-  },
+    frequency
+  }
 });
 
 interface SetOscNodeType {
@@ -59,40 +59,40 @@ interface SetOscNodeType {
 
 const setOscNodeType = (
   nodeId: Types.NodeId,
-  oscNodeType: Types.OscNodeType,
+  oscNodeType: Types.OscNodeType
 ): EventType => ({
-  kind: 'SetOscNodeType',
+  kind: "SetOscNodeType",
   payload: {
     nodeId,
-    oscNodeType,
-  },
+    oscNodeType
+  }
 });
 
 export type EventType =
-  | EventShape<'SetPlaying', SetPlaying>
-  | EventShape<'CreateOscillator', CreateOscillator>
-  | EventShape<'SetFrequency', SetFrequency>
-  | EventShape<'SetOscNodeType', SetOscNodeType>;
+  | EventShape<"SetPlaying", SetPlaying>
+  | EventShape<"CreateOscillator", CreateOscillator>
+  | EventShape<"SetFrequency", SetFrequency>
+  | EventShape<"SetOscNodeType", SetOscNodeType>;
 
 export const actions = {
   createOscillator,
   setPlaying,
   setFrequency,
-  setOscNodeType,
+  setOscNodeType
 };
 
 export const fold = <A, B>(
   f: (acc: B, a: A) => B,
   def: B,
-  map: Map<any, A>,
+  map: Map<any, A>
 ): B => Array.from(map).reduce<B>((as, [_, a]) => f(as, a), def);
 
 export const foldEvents = (
   state: DesiredState,
-  event: EventType,
+  event: EventType
 ): DesiredState => {
   switch (event.kind) {
-    case 'SetPlaying':
+    case "SetPlaying":
       return {
         ...state,
         oscillators: state.oscillators.map(osc => {
@@ -101,14 +101,14 @@ export const foldEvents = (
               ...osc,
               state: {
                 ...osc.state,
-                playing: event.payload.playing,
-              },
+                playing: event.payload.playing
+              }
             };
           }
           return osc;
-        }),
+        })
       };
-    case 'SetFrequency':
+    case "SetFrequency":
       return {
         ...state,
         oscillators: state.oscillators.map(osc => {
@@ -117,14 +117,14 @@ export const foldEvents = (
               ...osc,
               state: {
                 ...osc.state,
-                frequency: event.payload.frequency,
-              },
+                frequency: event.payload.frequency
+              }
             };
           }
           return osc;
-        }),
+        })
       };
-    case 'SetOscNodeType':
+    case "SetOscNodeType":
       return {
         ...state,
         oscillators: state.oscillators.map(osc => {
@@ -133,25 +133,25 @@ export const foldEvents = (
               ...osc,
               state: {
                 ...osc.state,
-                oscNodeType: event.payload.oscNodeType,
-              },
+                oscNodeType: event.payload.oscNodeType
+              }
             };
           }
           return osc;
-        }),
+        })
       };
-    case 'CreateOscillator':
+    case "CreateOscillator":
       return {
         ...state,
         oscillators: [
           ...state.oscillators.filter(
-            a => a.nodeId.id !== event.payload.nodeId.id,
+            a => a.nodeId.id !== event.payload.nodeId.id
           ),
           {
             nodeId: event.payload.nodeId,
-            state: Types.monoidOscNode.mempty,
-          },
-        ],
+            state: Types.monoidOscNode.mempty
+          }
+        ]
       };
   }
   return state;
@@ -159,10 +159,10 @@ export const foldEvents = (
 
 export const fetchEvents = () =>
   axios
-    .get('http://localhost:3006/events')
+    .get("http://localhost:3006/events")
     .then(a => a.data)
     .catch(e => {
-      console.error('Could not fetch!');
+      console.error("Could not fetch!");
     });
 
 export interface Postable {
@@ -172,7 +172,7 @@ export interface Postable {
 
 export const postEvents = (postable: Postable[]) =>
   axios
-    .post('http://localhost:3006/pushEvents', {items: postable})
+    .post("http://localhost:3006/pushEvents", { items: postable })
     .catch(console.error);
 
 export const getCurrentTimestamp = () => {
@@ -184,7 +184,7 @@ type Return = [number, EventType][];
 
 export const combineEvents = <A>(
   oldEvents: Map<number, A>,
-  newEvents: Map<number, A>,
+  newEvents: Map<number, A>
 ): Map<number, A> => {
   return new Map([...oldEvents, ...newEvents]);
 };
