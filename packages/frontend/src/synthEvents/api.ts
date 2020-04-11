@@ -1,8 +1,8 @@
-import { EventType } from "./Events";
+import { SynthEventType } from "./types/oscillatorEvents";
 
 import axios from "axios";
 
-export const fetchEvents = () =>
+export const fetchSynthEvents = () =>
   axios
     .get("http://localhost:3006/events")
     .then(a => a.data)
@@ -12,10 +12,10 @@ export const fetchEvents = () =>
 
 export interface Postable {
   timestamp: number;
-  event: EventType;
+  event: SynthEventType;
 }
 
-export const postEvents = (postable: Postable[]) =>
+export const postSynthEvents = (postable: Postable[]) =>
   axios
     .post("http://localhost:3006/pushEvents", { items: postable })
     .catch(console.error);

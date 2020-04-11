@@ -1,48 +1,48 @@
 import {
   WebAudioState,
   OscillatorWithNode,
-  StartedWebAudioState,
-} from '../types/State';
-import {monoidOscNode} from '../types/Types';
-import {OscNodeChange} from './Diff';
+  StartedWebAudioState
+} from "./state";
+import { monoidOscNode } from "./types/webAudioTypes";
+import { OscNodeChange } from "./diff/diffOscillator";
 
 // add only
 export const updateAudioTree = (
   state: WebAudioState,
-  actions: OscNodeChange[],
+  actions: OscNodeChange[]
 ): WebAudioState => {
   const newestState = actions.reduce(
     (newState, action) => doOscNodeChangeAction(newState, action),
-    startWebAudioState(state),
+    startWebAudioState(state)
   );
   return newestState;
 };
 
 const startWebAudioState = (state: WebAudioState): StartedWebAudioState => {
   if (state.context !== null) {
-    return state;
+    return state as StartedWebAudioState;
   } else {
-    console.log('creating webaudio context');
+    console.log("creating webaudio context");
     return {
       ...state,
       context: new AudioContext(),
-      oscillators: {},
+      oscillators: {}
     };
   }
 };
 
 const doOscNodeChangeAction = (
   state: StartedWebAudioState,
-  action: OscNodeChange,
+  action: OscNodeChange
 ): StartedWebAudioState => {
   switch (action._type) {
-    case 'AddOscNode':
+    case "AddOscNode":
       const osc: OscillatorWithNode = {
         nodeId: {
-          _type: 'OscNode',
-          id: action.payload.id,
+          _type: "OscNode",
+          id: action.payload.id
         },
-        state: monoidOscNode.mempty,
+        state: monoidOscNode.mempty
       };
 
       const oscillatorNode = state.context.createOscillator();
@@ -50,9 +50,9 @@ const doOscNodeChangeAction = (
 
       oscillatorNode.frequency.setValueAtTime(
         osc.state.frequency.hz,
-        state.context.currentTime,
+        state.context.currentTime
       );
-      if (osc.state.playing === 'start') {
+      if (osc.state.playing === "start") {
         oscillatorNode.start();
       }
       oscillatorNode.type = osc.state.oscNodeType;
@@ -61,26 +61,26 @@ const doOscNodeChangeAction = (
         ...state,
         oscillators: {
           ...state.oscillators,
-          [action.payload.id]: oscillatorNode,
-        },
+          [action.payload.id]: oscillatorNode
+        }
       };
-    case 'RemoveOscNode':
+    case "RemoveOscNode":
       // todo
       return state;
-    case 'ChangeOscNodeFrequency':
+    case "ChangeOscNodeFrequency":
       const matchingFreq = state.oscillators[action.payload.id];
       if (matchingFreq && state.context) {
         matchingFreq.frequency.setValueAtTime(
           action.payload.frequency.hz,
-          state.context.currentTime,
+          state.context.currentTime
         );
       }
       return state;
 
-    case 'ChangeOscNodePlaying':
+    case "ChangeOscNodePlaying":
       const matchingPlay = state.oscillators[action.payload.id];
       if (matchingPlay && state.context) {
-        if (action.payload.playing === 'start') {
+        if (action.payload.playing === "start") {
           matchingPlay.start();
         } else {
           matchingPlay.stop();
@@ -88,7 +88,7 @@ const doOscNodeChangeAction = (
       }
       return state;
 
-    case 'ChangeOscNodeType':
+    case "ChangeOscNodeType":
       const matchingType = state.oscillators[action.payload.id];
       if (matchingType && state.context) {
         matchingType.type = action.payload.oscNodeType;

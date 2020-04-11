@@ -1,0 +1,23 @@
+{
+  "name": "@collabsynth/webaudio-diff",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "jest": "^24.9.0",
+    "ts-jest": "^24.9.1",
+    "ts-node": "^8.8.1",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.2"
+  },
+  "jest": {
+    "preset": "ts-jest"
+  },
+  "scripts": {
+    "test:watch": "jest -w",
+    "typescript:watch": "tsc --noEmit --watch",
+    "typescript:build": "tsc --watch"
+  }
+}

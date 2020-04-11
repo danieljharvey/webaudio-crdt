@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@collabsynth/foldCache": "*",
+    "@collabsynth/webaudio-diff": "*",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -12,17 +13,18 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "axios": "^0.19.2",
+    "jest": "24.9.0",
     "prettier": "^1.19.1",
     "react": "^16.12.0",
+    "react-app-rewired": "^2.1.5",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.1",
-    "typescript": "~3.7.2",
-    "jest": "24.9.0"
+    "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start --scripts-version react-scripts",
+    "build": "react-app-rewired build --scripts-version react-scripts",
+    "test": "react-app-rewired test --scripts-version react-scripts",
     "eject": "react-scripts eject",
     "typescript:watch": "tsc --watch --noEmit"
   },
@@ -30,7 +32,11 @@
     "extends": "react-app"
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

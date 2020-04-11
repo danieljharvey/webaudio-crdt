@@ -1,5 +1,4 @@
-import * as Types from "./Types";
-import { EventType } from "../logic/Events";
+import * as Types from "./types/webAudioTypes";
 
 interface EmptyWebAudioState {
   context: null;
@@ -33,16 +32,12 @@ export const initialDesiredState: DesiredState = {
 
 // main state type
 
-export interface State {
+export interface WebAudioDiffState {
   webAudio: WebAudioState;
-  data: DesiredState;
-  events: Map<number, EventType>;
-  lastPushed: number | null;
+  desired: DesiredState;
 }
 
-export const initialState: State = {
+export const initialState: WebAudioDiffState = {
   webAudio: { context: null },
-  data: initialDesiredState,
-  events: new Map(),
-  lastPushed: null
+  desired: initialDesiredState
 };

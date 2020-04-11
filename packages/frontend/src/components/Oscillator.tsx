@@ -1,53 +1,59 @@
-import * as React from 'react';
-import {EventType, actions} from '../logic/Events';
-import {OscillatorWithNode} from '../types/State';
+import * as React from "react";
+import { SynthEventType, oscillatorActions } from "../synthEvents";
+import { OscillatorWithNode } from "@collabsynth/webaudio-diff";
 
 interface OscillatorProps {
   oscillator: OscillatorWithNode;
-  dispatchEvent: (evt: EventType) => void;
+  dispatchSynthEvent: (evt: SynthEventType) => void;
 }
 
 export const Oscillator: React.FunctionComponent<OscillatorProps> = ({
   oscillator,
-  dispatchEvent,
+  dispatchSynthEvent
 }) => {
   const start = () =>
-    dispatchEvent(actions.setPlaying(oscillator.nodeId, 'start'));
+    dispatchSynthEvent(
+      oscillatorActions.setPlaying(oscillator.nodeId, "start")
+    );
 
   const increaseFreq = () =>
-    dispatchEvent(
-      actions.setFrequency(oscillator.nodeId, {
+    dispatchSynthEvent(
+      oscillatorActions.setFrequency(oscillator.nodeId, {
         ...oscillator.state.frequency,
-        hz: oscillator.state.frequency.hz + 10,
-      }),
+        hz: oscillator.state.frequency.hz + 10
+      })
     );
 
   const decreaseFreq = () =>
-    dispatchEvent(
-      actions.setFrequency(oscillator.nodeId, {
+    dispatchSynthEvent(
+      oscillatorActions.setFrequency(oscillator.nodeId, {
         ...oscillator.state.frequency,
-        hz: oscillator.state.frequency.hz - 10,
-      }),
+        hz: oscillator.state.frequency.hz - 10
+      })
     );
 
   const setSquareWave = () =>
-    dispatchEvent(actions.setOscNodeType(oscillator.nodeId, 'square'));
+    dispatchSynthEvent(
+      oscillatorActions.setOscNodeType(oscillator.nodeId, "square")
+    );
 
   const setSawtooth = () =>
-    dispatchEvent(actions.setOscNodeType(oscillator.nodeId, 'sawtooth'));
+    dispatchSynthEvent(
+      oscillatorActions.setOscNodeType(oscillator.nodeId, "sawtooth")
+    );
 
   return (
     <div>
       <p>{oscillator.nodeId.id}</p>
-      {oscillator.state.playing === 'stop' && (
+      {oscillator.state.playing === "stop" && (
         <button onClick={start}>GOOOOOOO</button>
       )}
       <button onClick={decreaseFreq}>DOWN</button>
       <button onClick={increaseFreq}>UP</button>
-      {oscillator.state.oscNodeType !== 'sawtooth' && (
+      {oscillator.state.oscNodeType !== "sawtooth" && (
         <button onClick={setSawtooth}>Sawtooth</button>
       )}
-      {oscillator.state.oscNodeType !== 'square' && (
+      {oscillator.state.oscNodeType !== "square" && (
         <button onClick={setSquareWave}>Square</button>
       )}
     </div>

@@ -1,83 +1,5 @@
-import * as Types from "../types/Types";
-import { State, initialDesiredState, DesiredState } from "../types/State";
-import { Action, getOutstanding, getMaxKey } from "../reducer/reducer";
-
-interface EventShape<k, a> {
-  kind: k;
-  payload: a;
-}
-
-interface CreateOscillator {
-  nodeId: Types.NodeId;
-}
-
-const createOscillator = (nodeId: Types.NodeId): EventType => ({
-  kind: "CreateOscillator",
-  payload: {
-    nodeId
-  }
-});
-
-interface SetPlaying {
-  nodeId: Types.NodeId;
-  playing: Types.Playing;
-}
-
-const setPlaying = (
-  nodeId: Types.NodeId,
-  playing: Types.Playing
-): EventType => ({
-  kind: "SetPlaying",
-  payload: {
-    nodeId,
-    playing
-  }
-});
-
-interface SetFrequency {
-  nodeId: Types.NodeId;
-  frequency: Types.Frequency;
-}
-
-const setFrequency = (
-  nodeId: Types.NodeId,
-  frequency: Types.Frequency
-): EventType => ({
-  kind: "SetFrequency",
-  payload: {
-    nodeId,
-    frequency
-  }
-});
-
-interface SetOscNodeType {
-  nodeId: Types.NodeId;
-  oscNodeType: Types.OscNodeType;
-}
-
-const setOscNodeType = (
-  nodeId: Types.NodeId,
-  oscNodeType: Types.OscNodeType
-): EventType => ({
-  kind: "SetOscNodeType",
-  payload: {
-    nodeId,
-    oscNodeType
-  }
-});
-
-export type EventType =
-  | EventShape<"SetPlaying", SetPlaying>
-  | EventShape<"CreateOscillator", CreateOscillator>
-  | EventShape<"SetFrequency", SetFrequency>
-  | EventShape<"SetOscNodeType", SetOscNodeType>;
-
-export const actions = {
-  createOscillator,
-  setPlaying,
-  setFrequency,
-  setOscNodeType
-};
+import { DesiredState, monoidOscNode } from "@collabsynth/webaudio-diff";
+import { SynthEventType } from "./types/oscillatorEvents";
 
 export const fold = <A, B>(
   f: (acc: B, a: A) => B,
@@ -85,9 +7,9 @@ export const fold = <A, B>(
   map: Map<any, A>
 ): B => Array.from(map).reduce<B>((as, [_, a]) => f(as, a), def);
 
-export const foldEvents = (
+export const foldSynthEvents = (
   state: DesiredState,
-  event: EventType
+  event: SynthEventType
 ): DesiredState => {
   switch (event.kind) {
     case "SetPlaying":
@@ -147,7 +69,7 @@ export const foldEvents = (
           ),
           {
             nodeId: event.payload.nodeId,
-            state: Types.monoidOscNode.mempty
+            state: monoidOscNode.mempty
           }
         ]
       };
@@ -160,11 +82,9 @@ export const getCurrentTimestamp = () => {
   return date.getTime();
 };
 
-type Return = [number, EventType][];
-
-export const combineEvents = <A>(
-  oldEvents: Map<number, A>,
-  newEvents: Map<number, A>
+export const combineSynthEvents = <A>(
+  oldSynthEvents: Map<number, A>,
+  newSynthEvents: Map<number, A>
 ): Map<number, A> => {
-  return new Map([...oldEvents, ...newEvents]);
+  return new Map([...oldSynthEvents, ...newSynthEvents]);
 };

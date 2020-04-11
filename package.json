@@ -6,5 +6,10 @@
   "author": "Daniel Harvey <danieljamesharvey@gmail.com>",
   "license": "MIT",
   "private": true,
-  "workspaces": ["packages/server", "packages/frontend", "packages/foldCache"]
+  "workspaces": [
+    "packages/server",
+    "packages/frontend",
+    "packages/foldCache",
+    "packages/webaudio-diff"
+  ]
 }

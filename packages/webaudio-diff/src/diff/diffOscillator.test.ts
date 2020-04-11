@@ -1,6 +1,6 @@
-import { diffAllOscs } from "./Diff";
-import { DesiredState, OscillatorWithNode } from "../types/State";
-import { monoidOscNode } from "../types/Types";
+import { diffAllOscs } from "./diffOscillator";
+import { DesiredState, OscillatorWithNode } from "../state";
+import { monoidOscNode } from "../types/webAudioTypes";
 
 const testOsc: OscillatorWithNode = {
   nodeId: { _type: "OscNode", id: "test" },

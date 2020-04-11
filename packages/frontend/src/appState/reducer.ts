@@ -1,25 +1,26 @@
-import { State, WebAudioState, DesiredState } from "../types/State";
-import { EventType, combineEvents } from "../logic/Events";
-import { Postable } from "../logic/Api";
+import { DesiredState, WebAudioDiffState } from "@collabsynth/webaudio-diff";
+import { State } from "./state";
+import { SynthEventType, combineSynthEvents } from "../synthEvents";
+import { Postable } from "../synthEvents/api";
 
-interface SaveEvents {
-  type: "SaveEvents";
-  payload: { events: [number, EventType][] };
+interface SaveSynthEvents {
+  type: "SaveSynthEvents";
+  payload: { events: [number, SynthEventType][] };
 }
 
-interface AddEvent {
-  type: "AddEvent";
+interface AddSynthEvent {
+  type: "AddSynthEvent";
   payload: {
     timestamp: number;
-    evt: EventType;
+    evt: SynthEventType;
   };
 }
 
 interface UpdateAudioTree {
   type: "UpdateAudioTree";
   payload: {
-    webAudio: WebAudioState;
-    desiredState: DesiredState;
+    diffState: WebAudioDiffState;
+    desired: DesiredState;
   };
 }
 
@@ -30,19 +31,23 @@ interface SetLastPushed {
   };
 }
 
-export type Action = SaveEvents | AddEvent | UpdateAudioTree | SetLastPushed;
+export type Action =
+  | SaveSynthEvents
+  | AddSynthEvent
+  | UpdateAudioTree
+  | SetLastPushed;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "SaveEvents":
+    case "SaveSynthEvents":
       // sdfsdfsdf
-      const newEventsMap = new Map(action.payload.events);
+      const newSynthEventsMap = new Map(action.payload.events);
       return {
         ...state,
-        events: combineEvents(state.events, newEventsMap)
+        events: combineSynthEvents(state.events, newSynthEventsMap)
       };
 
-    case "AddEvent":
+    case "AddSynthEvent":
       // sdfsdfsdf
       const events = new Map(state.events).set(
         action.payload.timestamp,
@@ -56,8 +61,10 @@ export const reducer = (state: State, action: Action): State => {
     case "UpdateAudioTree":
       return {
         ...state,
-        data: action.payload.desiredState,
-        webAudio: action.payload.webAudio
+        audioDiff: {
+          desired: action.payload.desired,
+          webAudio: action.payload.diffState.webAudio
+        }
       };
 
     case "SetLastPushed":

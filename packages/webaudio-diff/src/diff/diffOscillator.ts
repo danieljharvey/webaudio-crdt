@@ -1,5 +1,5 @@
-import * as Types from "../types/Types";
-import { DesiredState } from "../types/State";
+import * as Types from "../types/webAudioTypes";
+import { DesiredState } from "../state";
 
 // here we diff the states
 
