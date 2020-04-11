@@ -1,4 +1,8 @@
-import { foldSynthEvents, actions, combineSynthEvents } from "./SynthEvents";
+import {
+  foldSynthEvents,
+  oscillatorActions,
+  combineSynthEvents
+} from "./index";
 import { DesiredState } from "@collabsynth/webaudio-diff";
 
 const emptyState: DesiredState = {
@@ -8,11 +12,17 @@ const emptyState: DesiredState = {
 describe("foldSynthEvents", () => {
   describe("CreateOscillator", () => {
     it("When empty", () => {
-      const event = actions.createOscillator({ id: "test", _type: "OscNode" });
+      const event = oscillatorActions.createOscillator({
+        id: "test",
+        _type: "OscNode"
+      });
       expect(foldSynthEvents(emptyState, event).oscillators).toHaveLength(1);
     });
     it("Does not duplicate", () => {
-      const event = actions.createOscillator({ id: "test", _type: "OscNode" });
+      const event = oscillatorActions.createOscillator({
+        id: "test",
+        _type: "OscNode"
+      });
 
       expect(
         foldSynthEvents(foldSynthEvents(emptyState, event), event).oscillators
@@ -22,7 +32,7 @@ describe("foldSynthEvents", () => {
 
   describe("SetPlaying", () => {
     it("Ignores empty", () => {
-      const event = actions.setPlaying(
+      const event = oscillatorActions.setPlaying(
         { id: "test", _type: "OscNode" },
         "start"
       );
@@ -30,8 +40,11 @@ describe("foldSynthEvents", () => {
     });
 
     it("Updates existing item", () => {
-      const event1 = actions.createOscillator({ id: "test", _type: "OscNode" });
-      const event2 = actions.setPlaying(
+      const event1 = oscillatorActions.createOscillator({
+        id: "test",
+        _type: "OscNode"
+      });
+      const event2 = oscillatorActions.setPlaying(
         { id: "test", _type: "OscNode" },
         "start"
       );
@@ -44,7 +57,7 @@ describe("foldSynthEvents", () => {
 
   describe("SetFrequency", () => {
     it("Ignores empty", () => {
-      const event = actions.setFrequency(
+      const event = oscillatorActions.setFrequency(
         { id: "test", _type: "OscNode" },
         { _type: "Frequency", hz: 100 }
       );
@@ -52,8 +65,11 @@ describe("foldSynthEvents", () => {
     });
 
     it("Updates existing item", () => {
-      const event1 = actions.createOscillator({ id: "test", _type: "OscNode" });
-      const event2 = actions.setFrequency(
+      const event1 = oscillatorActions.createOscillator({
+        id: "test",
+        _type: "OscNode"
+      });
+      const event2 = oscillatorActions.setFrequency(
         { id: "test", _type: "OscNode" },
         { _type: "Frequency", hz: 100 }
       );
@@ -66,7 +82,7 @@ describe("foldSynthEvents", () => {
 
   describe("SetOscNodeType", () => {
     it("Ignores empty", () => {
-      const event = actions.setOscNodeType(
+      const event = oscillatorActions.setOscNodeType(
         { id: "test", _type: "OscNode" },
         "square"
       );
@@ -74,8 +90,11 @@ describe("foldSynthEvents", () => {
     });
 
     it("Updates existing item", () => {
-      const event1 = actions.createOscillator({ id: "test", _type: "OscNode" });
-      const event2 = actions.setOscNodeType(
+      const event1 = oscillatorActions.createOscillator({
+        id: "test",
+        _type: "OscNode"
+      });
+      const event2 = oscillatorActions.setOscNodeType(
         { id: "test", _type: "OscNode" },
         "sawtooth"
       );
