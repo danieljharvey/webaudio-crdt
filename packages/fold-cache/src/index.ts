@@ -1,10 +1,10 @@
 type NumberKeyedMap<A> = { [key: number]: A };
 
-type Actions<A> = NumberKeyedMap<A>;
+export type Actions<A> = NumberKeyedMap<A>;
 
-type StateCache<S> = NumberKeyedMap<S>;
+export type StateCache<S> = NumberKeyedMap<S>;
 
-type Reducer<S, A> = (state: S, action: A) => S;
+export type Reducer<S, A> = (state: S, action: A) => S;
 
 export interface FoldCache<S, A> {
   actions: Actions<A>;
@@ -20,7 +20,7 @@ export const makeFoldCache = <S, A>(
   actions: {},
   stateCache: {},
   initialState,
-  reducer
+  reducer,
 });
 
 export const addAction = <S, A>(
@@ -30,8 +30,8 @@ export const addAction = <S, A>(
 ): FoldCache<S, A> =>
   fold({
     ...foldCache,
-    stateCache: filterCacheKey(foldCache.stateCache, k => k < newKey),
-    actions: { ...foldCache.actions, [newKey]: action }
+    stateCache: filterCacheKey(foldCache.stateCache, (k) => k < newKey),
+    actions: { ...foldCache.actions, [newKey]: action },
   });
 
 const filterCacheKey = <A>(
@@ -42,7 +42,7 @@ const filterCacheKey = <A>(
   Object.keys(cache)
     .map(Number)
     .filter(f)
-    .forEach(k => {
+    .forEach((k) => {
       newCache[k] = cache[k];
     });
   return newCache;
@@ -50,7 +50,7 @@ const filterCacheKey = <A>(
 
 const fold = <S, A>(foldCache: FoldCache<S, A>): FoldCache<S, A> => {
   const maxKey = getMaxKey(foldCache.stateCache) || 0;
-  const actions = filterCacheKey(foldCache.actions, k => k > maxKey);
+  const actions = filterCacheKey(foldCache.actions, (k) => k > maxKey);
   const maxActionKey = getMaxKey(actions) || 0;
   const newState = keyedMapToArray(actions).reduce(
     foldCache.reducer,
@@ -58,14 +58,14 @@ const fold = <S, A>(foldCache: FoldCache<S, A>): FoldCache<S, A> => {
   );
   return {
     ...foldCache,
-    stateCache: { ...foldCache.stateCache, [maxActionKey]: newState }
+    stateCache: { ...foldCache.stateCache, [maxActionKey]: newState },
   };
 };
 
 const keyedMapToArray = <A>(map: NumberKeyedMap<A>): A[] =>
   Object.keys(map)
     .map(Number)
-    .map(k => map[k]);
+    .map((k) => map[k]);
 
 const getMaxKey = <S>(cache: StateCache<S>): number | null =>
   Object.keys(cache)
@@ -129,7 +129,7 @@ const actions: [Action, number][] = [
   [{ _tag: "Up" }, 300],
   [{ _tag: "Double" }, 400],
   [{ _tag: "Up" }, 1030],
-  [{ _tag: "Squared" }, 105]
+  [{ _tag: "Squared" }, 105],
 ];
 
 actions.reduce(logAction, myFoldCache);

@@ -9,7 +9,7 @@
   "workspaces": [
     "packages/server",
     "packages/frontend",
-    "packages/foldCache",
+    "packages/fold-cache",
     "packages/webaudio-diff"
   ]
 }

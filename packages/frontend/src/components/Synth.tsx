@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useInterval } from "../hooks/useInterval";
 import {
   updateToDesiredState,
   initialDesiredState
@@ -15,28 +15,6 @@ import {
 import { fetchSynthEvents, postSynthEvents } from "../synthEvents/api";
 import { Oscillator } from "./Oscillator";
 import { reducer, getOutstanding, getMaxKey } from "../appState/reducer";
-
-function useInterval(callback: any, delay: number) {
-  const savedCallback: any = React.useRef();
-
-  // Remember the latest callback.
-  React.useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  React.useEffect(() => {
-    function tick() {
-      if (savedCallback && savedCallback.current !== undefined) {
-        savedCallback.current();
-      }
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
 
 export const Synth = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
